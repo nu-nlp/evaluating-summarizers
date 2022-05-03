@@ -1,0 +1,12 @@
+accelerate
+absl-py
+transformers
+datasets
+sentencepiece != 0.1.92
+protobuf
+rouge_score
+nltk
+py7zr
+torch
+bert_score
+mauve-text

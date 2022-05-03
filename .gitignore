@@ -1,0 +1,8 @@
+.idea
+.DS_STORE
+.lock
+.ipynb_checkpoints
+.vscode
+__pycache__
+summarization_outputs
+evaluation_outputs
