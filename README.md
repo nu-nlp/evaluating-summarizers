@@ -16,7 +16,7 @@ pip3 install -r requirements.txt
 ```
 
 ###  Setup for optmization based summarization and evaluation
-1. **Navigate into the directory `evaluating-summarizers`**
+1. **Navigate into the directory `optimization_based`**
 2. Create a miniconda environment and install the requirements.txt
 
 ```
