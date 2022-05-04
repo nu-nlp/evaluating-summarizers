@@ -19,18 +19,18 @@ class LeadSummarizer(AbstractSummarizer):
         sentences = sent_tokenize(text)
 
         # summarize and keep track of summary word count
-        summary = ""
-        sentence_index, summary_word_count = 0, 0
-
-        while summary_word_count <= length and sentence_index < len(sentences):
-            sentence = sentences[sentence_index]
+        summary_word_count = 0
+        selected_sentences = []
+        for sentence in sentences:
             sentence_word_count = len(word_tokenize(sentence))
+            # if adding sentence leads to less accurate word count, stop adding sentences
             if abs(length - summary_word_count - sentence_word_count) > abs(
                 length - summary_word_count
             ):
                 break
-            summary += sentence + " "
-            sentence_index += 1
+            selected_sentences.append(sentence)
             summary_word_count += sentence_word_count
+        
+        summary = ' '.join(selected_sentences)
 
         return summary.strip()

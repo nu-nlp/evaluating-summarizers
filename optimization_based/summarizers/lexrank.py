@@ -1,6 +1,8 @@
 from typing import List
+import numpy as np
 from lexrank import LexRank, STOPWORDS
 from nltk import sent_tokenize, word_tokenize
+
 # from sumy.parsers.plaintext import PlaintextParser
 # from sumy.nlp.tokenizers import Tokenizer
 # from sumy.summarizers.lex_rank import LexRankSummarizer as SumyLexRank
@@ -16,8 +18,7 @@ class LexRankSummarizer(AbstractSummarizer):
 
     def fit(self, documents: List[str]):
         self.documents = documents
-        self.lxr = LexRank(documents, stopwords=STOPWORDS['en'])
-
+        self.lxr = LexRank(documents, stopwords=STOPWORDS["en"])
 
     def get_summary(self, text: str, length: int) -> str:
         """Summarizes the input text
@@ -31,10 +32,34 @@ class LexRankSummarizer(AbstractSummarizer):
         # summarizer = SumyLexRank()
         # summary = summarizer(parser.document, length)
         # summary = " ".join([sentence._text for sentence in summary])
-        # get summary with classical LexRank algorithm
+        
 
         sentences = sent_tokenize(text)
-        summary_sentences = self.lxr.get_summary(sentences, summary_size=length, threshold=.1)
-        summary = ' '.join(summary_sentences).strip()
 
-        return summary
+        # get LexRank scores for sentences
+        lex_scores = self.lxr.rank_sentences(
+            sentences,
+            threshold=None, #0.1 also used
+            fast_power_method=False, # Set to True for faster computation. Requires more RAM
+        )
+
+        # order sentence indexes by descending sentence scores
+        ranked_sentence_indexes = np.argsort(lex_scores)[::-1]
+
+        # summarize and keep track of summary word count
+        summary_word_count = 0
+        selected_sentences = []
+        for sentence_index in ranked_sentence_indexes:
+            sentence = sentences[sentence_index]
+            sentence_word_count = len(word_tokenize(sentence))
+            # if adding sentence leads to less accurate word count, stop adding sentences
+            if abs(length - summary_word_count - sentence_word_count) > abs(
+                length - summary_word_count
+            ):
+                break
+            selected_sentences.append(sentence)
+            summary_word_count += sentence_word_count
+        
+        summary = ' '.join(selected_sentences)
+        
+        return summary.strip()

@@ -18,4 +18,4 @@ class TextRankSummarizer(AbstractSummarizer):
         """
         summary = summarize(text, words=length)
 
-        return summary
+        return summary.strip()
