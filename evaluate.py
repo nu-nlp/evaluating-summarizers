@@ -1,14 +1,12 @@
-# pick a metric from the metrics package
-# run the metric on the CSV
 import json
 from typing import List
 from pathlib import Path
 import argparse
 import pandas as pd
-# import nltk
+import nltk
 from data_utils.data import datasets_mapping
 
-# nltk.download("punkt")
+nltk.download("punkt")
 
 from evaluation.extensions import (
     bleu_metric,
@@ -58,6 +56,7 @@ def load_summarization_outputs(
     
     # unit_summary_time = df['summarization_time']
     # summarization_time = unit_summary_time.mean()
+
     # if you want to debug, use debug flag to restrict to 5 samples
     if debug:
         predictions, references = predictions[:5], references[:5]
@@ -112,9 +111,11 @@ def evaluate(
 
     output_directory = scores_dir / dataset / summarizer
     output_directory.mkdir(parents=True, exist_ok=True)
+    
     filename = "evaluation_test_debug" if debug else "evaluation_test"
     if target_column == "label":
         filename = "evaluation_test_debug_label" if debug else "evaluation_test_label"
+    
     with open(output_directory / f"{filename}.json", "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=4)
 

@@ -23,7 +23,6 @@ def main(
     summarization_outputs = []
 
 
-
     for document, target_summary in tqdm(zip(documents, summaries)):
         summary_output = summarize(text=document, length=length, model_name=summarizer)
         summary_output["target"] = target_summary
@@ -47,7 +46,6 @@ def main(
     output_directory = summarizations_dir / dataset / summarizer
     output_directory.mkdir(parents=True, exist_ok=True)
     filename = "summarization_test_debug" if debug else "summarization_test"
-    # filename = "summarization_test"
     df.to_csv(f"{output_directory}/{filename}.csv", index=False)
 
     return
