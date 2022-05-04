@@ -4,5 +4,5 @@
 .ipynb_checkpoints
 .vscode
 __pycache__
-summarization_outputs
+optimization_based/summarization_outputs
 evaluation_outputs

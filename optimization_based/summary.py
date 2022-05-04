@@ -4,7 +4,7 @@ from datetime import datetime
 import numpy as np
 from nltk import word_tokenize, sent_tokenize
 
-from extensions import (
+from optimization_based.extensions import (
     textrank_summarizer,
     lexrank_summarizer,
     lead_summarizer,
@@ -17,8 +17,6 @@ summarization_length_mapping = {
     "Lead": "word count",
     "Random": "word count",
 }
-
-# TODO: Mapping between models and length type (num words vs num sentences)
 
 def summarize(text: str, length: int, model_name: str) -> Dict:
     """Summarizes the input text
@@ -33,6 +31,8 @@ def summarize(text: str, length: int, model_name: str) -> Dict:
 
     elif model_name == "LexRank":
         summarizer = lexrank_summarizer
+        # summarizer.fit(documents=['test'])
+        # print(summarizer.documents)
 
     elif model_name == "Random":
         summarizer = random_summarizer

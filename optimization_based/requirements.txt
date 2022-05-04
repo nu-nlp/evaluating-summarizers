@@ -1,0 +1,16 @@
+datasets >= 1.8.0
+rouge-score
+nltk
+bert-score
+sacrebleu
+lexrank
+mauve-text
+numpy
+scipy
+scikit-learn
+summa
+sumy
+pandas
+tqdm
+black
+jupyterlab

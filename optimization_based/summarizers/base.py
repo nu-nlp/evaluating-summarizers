@@ -7,5 +7,5 @@ class AbstractSummarizer(metaclass=ABCMeta):
         self.model_name = None
 
     @abstractmethod
-    def get_summary(text: str, length: int):
+    def get_summary(self, text: str, length: int):
         return NotImplementedError

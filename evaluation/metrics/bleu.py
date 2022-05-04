@@ -1,9 +1,8 @@
 from typing import List, Dict
 from nltk.tokenize import word_tokenize
-from metrics.base import AbstractMetric
-
 from datasets import load_metric
 
+from evaluation.metrics.base import AbstractMetric
 
 class BleuMetric(AbstractMetric):
     def __init__(self):

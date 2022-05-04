@@ -5,39 +5,18 @@ from typing import List
 from pathlib import Path
 import argparse
 import pandas as pd
-import numpy as np
-import nltk
-from data import summarization_name_mapping
+# import nltk
+from data_utils.data import datasets_mapping
 
-nltk.download('punkt')
-from extensions import (
+# nltk.download("punkt")
+
+from evaluation.extensions import (
     bleu_metric,
     sacrebleu_metric,
     rouge_metric,
     bertscore_metric,
     # mauve_metric,
 )
-
-# TODO 1: HIGH PRIORITY.
-# 1.    Make sure your keys are appropriate.
-#       Check out the metric card linked in each metrics/metric.py for more info
-#       e.g. Choose which Rouge Scores you want
-# 2.    Make sure you are clear on how to process these outputs. Search for TODO 1 in this file to see more details
-#       e.g. When sacrebleu = 6 and bleu = 0.06 so choose if you want a percentage
-#       or a number out of 100
-#       e.g. Choose which Bert Score you want: f1, precision, recall
-#       e.g. for rouge and Bert score it seems like you should decided
-#       on some aggregation.
-# IMPLEMENT ANY code in the metrics/metric.py files
-
-
-# summarization_metrics_mapping = {
-#     "rouge": ["rouge1", "rouge2", "rougeL"],
-#     "sacrebleu": ["score"],
-#     "bertscore": ["f1"],
-#     "bleu": ["bleu"],
-#     # "mauve": ["mauve"],
-# }
 
 david_datasets_mapping = {
     "cnn_dailymail": "cnn",
@@ -48,6 +27,7 @@ david_datasets_mapping = {
     "govreport": "gov",
 }
 
+
 def load_summarization_outputs(
     dataset: str,
     summarizer: str,
@@ -57,15 +37,14 @@ def load_summarization_outputs(
     debug: bool,
 ):
     if summarizer in ["TextRank", "LexRank", "Lead", "Random"]:
-        # Extractive models outputs will be found with this code
+        # optimization based models outputs will be found with this code
         filename = "summarization_test_debug.csv" if debug else "summarization_test.csv"
         file = summarizations_dir / dataset / summarizer / filename
     else:
         # To run this on David's CSVs: e.g. billsum_bartbase_197.csv
-        filename = (
-            f"{david_datasets_mapping[dataset]}_{summarizer}_{summarization_name_mapping[dataset][4]}.csv"
-        )
+        filename = f"{david_datasets_mapping[dataset]}_{summarizer}_{datasets_mapping[dataset][4]}.csv"
         file = summarizations_dir / filename
+    
     # Read the summarization outputs into  dataframe
     df = pd.read_csv(file)
 
@@ -73,9 +52,10 @@ def load_summarization_outputs(
     # It seems to occur with bad sentence tokenization and is probably fixable in the future
     # https://github.com/summanlp/textrank/issues/28
     # For now we replace empty summaries with empty strings.
-    # Also we return a list here and reshape as needed in each metrics/metric.py
+    
     predictions = df[summary_column].fillna("").tolist()
     references = df[target_column].fillna("").tolist()
+    
     # unit_summary_time = df['summarization_time']
     # summarization_time = unit_summary_time.mean()
     # if you want to debug, use debug flag to restrict to 5 samples
@@ -94,9 +74,8 @@ def evaluate(
     summarizer: str,
     metrics: List[str],
     debug: bool,
-    # save_output: bool
 ):
-    predictions, references= load_summarization_outputs(
+    predictions, references = load_summarization_outputs(
         dataset, summarizer, summary_column, target_column, summarizations_dir, debug
     )
 
@@ -129,26 +108,15 @@ def evaluate(
         # evaluate summaries
         scores = metric.evaluate(predictions=predictions, references=references)
 
-        # create an empty dictionat
-        # results[metric_name] = {}
-
-        # TODO 1: You want to move this logic to each metrics/metric.py file.
-        # This would allow you to do:
-        # a. select bertscore "f1" and return scores = { "f1": mean(f1 scores)}
-        # b. select bleu "bleu" and return scores = { "bleu": 100 * bleu score}
-        # c. select rouge you want to keep and return scores = { "rouge": rouge stuff you care about}
-        # d. select sacrebleu "score" and return scores = { "sacrebleu": sacrebleu score }
         results[metric_name] = scores
-        """
-        if save_output:
-            output_directory = Path(f"evaluation_outputs/{dataset}/{summarizer}")
-            output_directory.mkdir(parents=True, exist_ok=True)
-            filename = "evaluation_test_debug" if debug else "evaluation_test"
-            with open(
-                output_directory / f"{filename}.json", "w", encoding="utf-8"
-            ) as f:
-                json.dump(results, f, ensure_ascii=False, indent=4)
-        """
+
+    output_directory = scores_dir / dataset / summarizer
+    output_directory.mkdir(parents=True, exist_ok=True)
+    filename = "evaluation_test_debug" if debug else "evaluation_test"
+    if target_column == "label":
+        filename = "evaluation_test_debug_label" if debug else "evaluation_test_label"
+    with open(output_directory / f"{filename}.json", "w", encoding="utf-8") as f:
+        json.dump(results, f, ensure_ascii=False, indent=4)
 
     return results
 
@@ -161,21 +129,22 @@ if __name__ == "__main__":
     parser.add_argument("--dataset", type=str, default="cnn_dailymail")
     parser.add_argument("--summarizer", type=str, default="TextRank")
     parser.add_argument(
-        "--summarizations-dir", type=Path, default=Path("summarization_outputs")
+        "--summarizations-dir",
+        type=Path,
+        default=Path("optimization_based/summarization_outputs"),
     )
-    parser.add_argument("--scores-dir", type=Path, default=Path("evaluation_outputs"))
+    parser.add_argument("--scores-dir", type=Path, default=Path("evaluation/evaluation_outputs"))
     parser.add_argument("--summary-column", type=str, default="summary")
     parser.add_argument("--target-column", type=str, default="target")
     parser.add_argument(
         "--metrics", type=str, nargs="*", default=["rouge", "sacrebleu", "bleu"]
     )
     parser.add_argument("--debug", action="store_true")
-    # parser.add_argument("--save-output", action="store_true")
 
     args = parser.parse_args()
 
     results = evaluate(**dict(args._get_kwargs()))
-
+    """
     scores_dir = args.scores_dir
     dataset = args.dataset
     summarizer = args.summarizer
@@ -187,7 +156,4 @@ if __name__ == "__main__":
         filename = "evaluation_test_debug_label" if args.debug else "evaluation_test_label"
     with open(output_directory / f"{filename}.json", "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=4)
-
-
-
-
+    """

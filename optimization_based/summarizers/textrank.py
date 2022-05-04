@@ -1,5 +1,5 @@
 from summa.summarizer import summarize
-from summarizers.base import AbstractSummarizer
+from optimization_based.summarizers.base import AbstractSummarizer
 
 
 class TextRankSummarizer(AbstractSummarizer):
@@ -7,8 +7,8 @@ class TextRankSummarizer(AbstractSummarizer):
         super().__init__()
         self.model_name = "TextRank"
 
-    @staticmethod
-    def get_summary(text: str, length: int) -> str:
+
+    def get_summary(self, text: str, length: int) -> str:
         """Summarizes the input text.
         Args:
             text (str): Input text to summarize.

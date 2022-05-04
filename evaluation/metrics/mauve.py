@@ -1,7 +1,7 @@
 from typing import List, Dict
-from metrics.base import AbstractMetric
-
 from datasets import load_metric
+
+from evaluation.metrics.base import AbstractMetric
 
 
 class MauveMetric(AbstractMetric):

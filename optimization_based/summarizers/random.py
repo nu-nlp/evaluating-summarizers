@@ -1,6 +1,6 @@
 import random
 from nltk.tokenize import word_tokenize, sent_tokenize
-from summarizers.base import AbstractSummarizer
+from optimization_based.summarizers.base import AbstractSummarizer
 
 
 class RandomSummarizer(AbstractSummarizer):
@@ -8,8 +8,8 @@ class RandomSummarizer(AbstractSummarizer):
         super().__init__()
         self.model_name = "Random"
 
-    @staticmethod
-    def get_summary(text: str, length: int) -> str:
+
+    def get_summary(self, text: str, length: int) -> str:
         """Summarizes the input text.
         Args:
             text (str): Input text to summarize.

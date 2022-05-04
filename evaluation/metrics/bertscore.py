@@ -1,7 +1,8 @@
 from typing import List, Dict
-from metrics.base import AbstractMetric
 import numpy as np
 from datasets import load_metric
+
+from evaluation.metrics.base import AbstractMetric
 
 
 class BertscoreMetric(AbstractMetric):

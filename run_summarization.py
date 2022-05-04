@@ -1,11 +1,10 @@
-import os
 from pathlib import Path
 import argparse
 import pandas as pd
 from tqdm import tqdm
 
-from data import load_dataset_huggingface
-from summary import summarize
+from data_utils.data import load_dataset_huggingface
+from optimization_based.summary import summarize
 
 
 def main(
@@ -22,6 +21,9 @@ def main(
         documents, summaries = documents[:5], summaries[:5]
 
     summarization_outputs = []
+
+
+
     for document, target_summary in tqdm(zip(documents, summaries)):
         summary_output = summarize(text=document, length=length, model_name=summarizer)
         summary_output["target"] = target_summary
@@ -42,19 +44,12 @@ def main(
     ]
     df = df.reindex(columns=column_names)
 
-    # """
-    
-    if save_output:
-        output_directory = Path(f"summarization_outputs/{dataset}/{summarizer}")
-        output_directory.mkdir(parents=True, exist_ok=True)
-        filename = "summarization_test_debug" if debug else "summarization_test"
-        df.to_csv(f"{output_directory}/{filename}.csv", index=False)
-    # """
     output_directory = summarizations_dir / dataset / summarizer
     output_directory.mkdir(parents=True, exist_ok=True)
     filename = "summarization_test_debug" if debug else "summarization_test"
     # filename = "summarization_test"
     df.to_csv(f"{output_directory}/{filename}.csv", index=False)
+
     return
 
 
@@ -66,7 +61,7 @@ if __name__ == "__main__":
     parser.add_argument("--dataset", type=str, default="cnn_dailymail")
     parser.add_argument("--summarizer", type=str, default="TextRank")
     parser.add_argument(
-        "--summarizations-dir", type=Path, default=Path("summarization_outputs")
+        "--summarizations-dir", type=Path, default=Path("optimization_based/summarization_outputs")
     )
     parser.add_argument("--debug", action="store_true")
     # parser.add_argument("--save-output", action="store_true")

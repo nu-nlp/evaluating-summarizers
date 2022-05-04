@@ -1,8 +1,9 @@
+from typing import List
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lex_rank import LexRankSummarizer as SumyLexRank
 
-from summarizers.base import AbstractSummarizer
+from optimization_based.summarizers.base import AbstractSummarizer
 
 
 class LexRankSummarizer(AbstractSummarizer):
@@ -10,8 +11,10 @@ class LexRankSummarizer(AbstractSummarizer):
         super().__init__()
         self.model_name = "LexRank"
 
-    @staticmethod
-    def get_summary(text: str, length: int) -> str:
+    def fit(self, documents: List[str]):
+        self.documents = documents
+
+    def get_summary(self, text: str, length: int) -> str:
         """Summarizes the input text
         Args:
             text (str): Input text to summarize.
