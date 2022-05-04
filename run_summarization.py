@@ -1,18 +1,14 @@
+from typing import Dict
 from pathlib import Path
+from datetime import datetime
 import argparse
+
 import pandas as pd
 from tqdm import tqdm
+from nltk import word_tokenize
 
 from data_utils.data import load_dataset_huggingface
 
-# from summary import summarize
-
-
-from typing import Dict
-import math
-from datetime import datetime
-import numpy as np
-from nltk import word_tokenize, sent_tokenize
 
 from optimization_based.extensions import (
     textrank_summarizer,
@@ -38,16 +34,6 @@ def summarize_document(text: str, length: int, summarizer: abstract_summarizer) 
     Returns:
         summary_output (Dict): Summary of input text and some data
     """
-    # convert length from word count to target number of sentences if model requires it
-    words_or_sentences = summarization_length_mapping.get(
-        summarizer.model_name, "word count"
-    )
-    if words_or_sentences == "sentence count":
-        sentence_lengths = [
-            len(word_tokenize(sentence)) for sentence in sent_tokenize(text)
-        ]
-        length = math.ceil(length // np.mean(sentence_lengths))
-
     # start timer
     start = datetime.now()
 
@@ -90,7 +76,7 @@ def main(
     elif summarizer == "LexRank":
         model = lexrank_summarizer
         # start timer
-        start = datetime.now()        
+        start = datetime.now()
         print(f"Start training LexRank")
         model.fit(documents=documents)
         # end timer
@@ -102,7 +88,7 @@ def main(
 
     else:
         model = lead_summarizer
-    
+
     # TODO: add other summarizers
 
     if debug:

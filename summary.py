@@ -11,12 +11,6 @@ lead_summarizer,
 random_summarizer,
 )
 
-summarization_length_mapping = {
-    "TextRank": "word count",
-    "LexRank": "sentence count",
-    "Lead": "word count",
-    "Random": "word count",
-}
 
 def summarize(text: str, length: int, model_name: str) -> Dict:
     """Summarizes the input text
@@ -40,16 +34,6 @@ def summarize(text: str, length: int, model_name: str) -> Dict:
     else:
         summarizer = lead_summarizer
     # TODO: add other summarizers
-
-    # convert length from word count to target number of sentences if model requires it
-    words_or_sentences = summarization_length_mapping.get(
-        summarizer.model_name, "word count"
-    )
-    if words_or_sentences == "sentence count":
-        sentence_lengths = [
-            len(word_tokenize(sentence)) for sentence in sent_tokenize(text)
-        ]
-        length = math.ceil(length // np.mean(sentence_lengths))
 
     # start timer
     start = datetime.now()
@@ -88,9 +72,9 @@ if __name__ == "__main__":
     summary_output = summarize(text, length, model_name)
     print(summary_output)
 
-    # model_name = "LexRank"
-    # summary_output = summarize(text, length, model_name)
-    # print(summary_output)
+    model_name = "LexRank"
+    summary_output = summarize(text, length, model_name)
+    print(summary_output)
 
     model_name = "Random"
     summary_output = summarize(text, length, model_name)
