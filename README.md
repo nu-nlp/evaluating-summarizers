@@ -4,10 +4,11 @@ A project to compare neural abstractive and non-neural/optimization_based extrac
 
 ## 1. Setup
 
-###  Setup for neural models summarization
-1. Navigate into the directory `neural`
-2. Create a miniconda environment and install the requirements.txt
+###  Connect to [the shared google drive](https://drive.google.com/drive/folders/1DEPi12LsAozAQeNym5UVVj3i_6_AL5_X?usp=sharing)
 
+###  Setup your python environment for neural models summarization
+1. **Navigate into the directory `neural`**
+2. Create a miniconda environment and install the requirements.txt
 ```
 conda create -n huggingface python=3.7
 conda activate huggingface
@@ -15,7 +16,7 @@ pip3 install -r requirements.txt
 ```
 
 ###  Setup for optmization based summarization and evaluation
-1. Navigate into the directory `evaluating-summarizers`
+1. **Navigate into the directory `evaluating-summarizers`**
 2. Create a miniconda environment and install the requirements.txt
 
 ```
