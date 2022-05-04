@@ -5,10 +5,10 @@ import numpy as np
 from nltk import word_tokenize, sent_tokenize
 
 from optimization_based.extensions import (
-    textrank_summarizer,
-    lexrank_summarizer,
-    lead_summarizer,
-    random_summarizer,
+textrank_summarizer,
+lexrank_summarizer,
+lead_summarizer,
+random_summarizer,
 )
 
 summarization_length_mapping = {
@@ -49,7 +49,7 @@ def summarize(text: str, length: int, model_name: str) -> Dict:
         sentence_lengths = [
             len(word_tokenize(sentence)) for sentence in sent_tokenize(text)
         ]
-        length = math.ceil(length // np.median(sentence_lengths))
+        length = math.ceil(length // np.mean(sentence_lengths))
 
     # start timer
     start = datetime.now()
@@ -83,13 +83,14 @@ if __name__ == "__main__":
         "Do we have the technology to contact aliens?"
     )
     length = 10
+    
     model_name = "TextRank"
     summary_output = summarize(text, length, model_name)
     print(summary_output)
 
-    model_name = "LexRank"
-    summary_output = summarize(text, length, model_name)
-    print(summary_output)
+    # model_name = "LexRank"
+    # summary_output = summarize(text, length, model_name)
+    # print(summary_output)
 
     model_name = "Random"
     summary_output = summarize(text, length, model_name)

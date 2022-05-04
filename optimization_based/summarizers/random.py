@@ -8,7 +8,6 @@ class RandomSummarizer(AbstractSummarizer):
         super().__init__()
         self.model_name = "Random"
 
-
     def get_summary(self, text: str, length: int) -> str:
         """Summarizes the input text.
         Args:
@@ -32,8 +31,13 @@ class RandomSummarizer(AbstractSummarizer):
 
         while summary_word_count <= length and sentence_index < len(sentences):
             sentence = sentences[sentence_indexes[sentence_index]]
+            sentence_word_count = len(word_tokenize(sentence))
+            if abs(length - summary_word_count - sentence_word_count) > abs(
+                length - summary_word_count
+            ):
+                break
             summary += sentence + " "
             sentence_index += 1
-            summary_word_count += len(word_tokenize(sentence))
+            summary_word_count += sentence_word_count
 
         return summary.strip()

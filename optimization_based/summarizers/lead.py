@@ -7,7 +7,6 @@ class LeadSummarizer(AbstractSummarizer):
         super().__init__()
         self.model_name = "Lead"
 
-
     def get_summary(self, text: str, length: int) -> str:
         """Summarizes the input text
         Args:
@@ -16,18 +15,22 @@ class LeadSummarizer(AbstractSummarizer):
         Returns:
             summary (str): Summary of input text.
         """
-        # split text into sentences 
+        # split text into sentences
         sentences = sent_tokenize(text)
 
         # summarize and keep track of summary word count
         summary = ""
         sentence_index, summary_word_count = 0, 0
-        
+
         while summary_word_count <= length and sentence_index < len(sentences):
             sentence = sentences[sentence_index]
+            sentence_word_count = len(word_tokenize(sentence))
+            if abs(length - summary_word_count - sentence_word_count) > abs(
+                length - summary_word_count
+            ):
+                break
             summary += sentence + " "
             sentence_index += 1
-            summary_word_count += len(word_tokenize(sentence))
+            summary_word_count += sentence_word_count
 
         return summary.strip()
-        

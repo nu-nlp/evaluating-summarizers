@@ -4,7 +4,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from data_utils.data import load_dataset_huggingface
-from optimization_based.summary import summarize
+from summary import summarize
 
 
 def main(
