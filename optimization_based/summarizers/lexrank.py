@@ -13,7 +13,6 @@ class LexRankSummarizer(AbstractSummarizer):
         self.lxr = None
 
     def fit(self, documents: List[str]):
-        self.documents = documents
         self.lxr = LexRank(documents, stopwords=STOPWORDS["en"])
 
     def get_summary(self, text: str, length: int) -> str:
@@ -46,6 +45,7 @@ class LexRankSummarizer(AbstractSummarizer):
             sentence_word_count = len(word_tokenize(sentence))
 
             # if adding sentence leads to less accurate word count, stop adding sentences
+            ## Checks if the inclusion of the sentence gives a better approximation to the word parameter
             if abs(length - summary_word_count - sentence_word_count) > abs(
                 length - summary_word_count
             ):

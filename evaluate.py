@@ -25,6 +25,9 @@ david_datasets_mapping = {
     "govreport": "gov",
 }
 
+DATASETS = ["cnn_dailymail", "arxiv", "billsum", "govreport"]
+MODELS = ["TextRank", "LexRank", "Lead", "Random", "bartbase", "bartlarge", "t5small"]
+METRICS = ["sacrebleu", "bleu", "rouge", "bertscore"]
 
 def load_summarization_outputs(
     dataset: str,
@@ -72,52 +75,67 @@ def evaluate(
     target_column: str,
     summarizer: str,
     metrics: List[str],
+    all_summarizers : bool,
+    all_datasets : bool,
+    all_metrics : bool,
     debug: bool,
 ):
-    predictions, references = load_summarization_outputs(
-        dataset, summarizer, summary_column, target_column, summarizations_dir, debug
-    )
+    # datasets = [dataset]
+    # summarizers = [summarizer]
 
-    # create a dictionary for the metric results
-    results = {"summarizer": summarizer, "dataset": dataset}
+    if all_datasets == True:
+        datasets = DATASETS
+    if all_summarizers == True:
+        summarizers = MODELS
+    if all_metrics == True:
+        metrics = METRICS
 
-    for metric_name in metrics:
+    for dataset in datasets:
+        for summarizer in summarizers:
+            predictions, references = load_summarization_outputs(
+                dataset, summarizer, summary_column, target_column, summarizations_dir, debug
+            )
 
-        # load metric
-        if metric_name == "bleu":
-            metric = bleu_metric
+            # create a dictionary for the metric results
+            results = {"summarizer": summarizer, "dataset": dataset}
+            print(f"Running summarizer {summarizer} on dataset {dataset}")
+            for metric_name in metrics:
 
-        elif metric_name == "sacrebleu":
-            metric = sacrebleu_metric
+                # load metric
+                if metric_name == "bleu":
+                    metric = bleu_metric
 
-        elif metric_name == "rouge":
-            metric = rouge_metric
+                elif metric_name == "sacrebleu":
+                    metric = sacrebleu_metric
 
-        elif metric_name == "bertscore":
-            metric = bertscore_metric
+                elif metric_name == "rouge":
+                    metric = rouge_metric
 
-        # TODO: NOT PRIORITY. Implement these two successfully
-        # Mauve does not work yet
-        # elif metric_name == "mauve":
-        #   metric = mauve_metric
+                elif metric_name == "bertscore":
+                    metric = bertscore_metric
 
-        # elif metric_name == "jensen-shannon":
-        #   metric = jensen_shannon_metric
+                # TODO: NOT PRIORITY. Implement these two successfully
+                # Mauve does not work yet
+                # elif metric_name == "mauve":
+                #   metric = mauve_metric
 
-        # evaluate summaries
-        scores = metric.evaluate(predictions=predictions, references=references)
+                # elif metric_name == "jensen-shannon":
+                #   metric = jensen_shannon_metric
 
-        results[metric_name] = scores
+                # evaluate summaries
+                scores = metric.evaluate(predictions=predictions, references=references)
 
-    output_directory = scores_dir / dataset / summarizer
-    output_directory.mkdir(parents=True, exist_ok=True)
-    
-    filename = "evaluation_test_debug" if debug else "evaluation_test"
-    if target_column == "label":
-        filename = "evaluation_test_debug_label" if debug else "evaluation_test_label"
-    
-    with open(output_directory / f"{filename}.json", "w", encoding="utf-8") as f:
-        json.dump(results, f, ensure_ascii=False, indent=4)
+                results[metric_name] = scores
+
+            output_directory = scores_dir / dataset / summarizer
+            output_directory.mkdir(parents=True, exist_ok=True)
+
+            filename = "evaluation_test_debug" if debug else "evaluation_test"
+            if target_column == "label":
+                filename = "evaluation_test_debug_label" if debug else "evaluation_test_label"
+
+            with open(output_directory / f"{filename}.json", "w", encoding="utf-8") as f:
+                json.dump(results, f, ensure_ascii=False, indent=4)
 
     return results
 
@@ -127,8 +145,10 @@ if __name__ == "__main__":
         description="Run evaluation metrics on summarization outputs."
     )
 
-    parser.add_argument("--dataset", type=str, default="cnn_dailymail")
-    parser.add_argument("--summarizer", type=str, default="TextRank")
+    parser.add_argument("--dataset", type=str, nargs="*", default=["cnn_dailymail"])
+    parser.add_argument("--all-datasets", action="store_true")
+    parser.add_argument("--summarizer", type=str, nargs="*", default=["TextRank"])
+    parser.add_argument("--all-summarizers", action="store_true")
     parser.add_argument(
         "--summarizations-dir",
         type=Path,
@@ -140,21 +160,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--metrics", type=str, nargs="*", default=["rouge", "sacrebleu", "bleu"]
     )
+    parser.add_argument("--all-metrics", action="store_true")
     parser.add_argument("--debug", action="store_true")
 
     args = parser.parse_args()
 
     results = evaluate(**dict(args._get_kwargs()))
-    """
-    scores_dir = args.scores_dir
-    dataset = args.dataset
-    summarizer = args.summarizer
 
-    output_directory = scores_dir / dataset / summarizer
-    output_directory.mkdir(parents=True, exist_ok=True)
-    filename = "evaluation_test_debug" if args.debug else "evaluation_test"
-    if args.target_column == 'label':
-        filename = "evaluation_test_debug_label" if args.debug else "evaluation_test_label"
-    with open(output_directory / f"{filename}.json", "w", encoding="utf-8") as f:
-        json.dump(results, f, ensure_ascii=False, indent=4)
-    """
