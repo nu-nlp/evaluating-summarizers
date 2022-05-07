@@ -71,10 +71,10 @@ def load_summarization_outputs(
 def evaluate(
     summarizations_dir: Path,
     scores_dir: Path,
-    dataset: str,
+    datasets: str,
     summary_column: str,
     target_column: str,
-    summarizer: str,
+    summarizers: str,
     metrics: List[str],
     all_summarizers : bool,
     all_datasets : bool,

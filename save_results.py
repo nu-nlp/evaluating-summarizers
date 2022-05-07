@@ -22,9 +22,9 @@ def json_to_csv(evaluation_output_dir):
     result_list = []
 
     for metric in metric_names:
-        for model in model_names:
+        for model in sorted(model_names):
             row = [metric, model]
-            for dataset in dataset_names:
+            for dataset in sorted(dataset_names):
                 print(dataset, model)
                 if metric == 'rouge':
                     values = []
