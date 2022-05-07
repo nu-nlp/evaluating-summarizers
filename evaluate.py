@@ -13,6 +13,7 @@ from evaluation.extensions import (
     sacrebleu_metric,
     rouge_metric,
     bertscore_metric,
+    jensen_shannon_metric
     # mauve_metric,
 )
 
@@ -119,8 +120,8 @@ def evaluate(
                 # elif metric_name == "mauve":
                 #   metric = mauve_metric
 
-                # elif metric_name == "jensen-shannon":
-                #   metric = jensen_shannon_metric
+                elif metric_name == "jensen_shannon":
+                    metric = jensen_shannon_metric
 
                 # evaluate summaries
                 scores = metric.evaluate(predictions=predictions, references=references)
