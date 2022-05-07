@@ -6,7 +6,8 @@ import argparse
 import pandas as pd
 from tqdm import tqdm
 from nltk import word_tokenize
-
+import nltk
+nltk.download('punkt')
 from data_utils.data import load_dataset_huggingface
 
 

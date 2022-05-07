@@ -9,16 +9,16 @@ def json_to_csv(evaluation_output_dir):
     # Stores: {dataset: {model : result, }, dataset2 :
     results = {}
 
-    for dataset in os.listdir(evaluation_output_dir):
+    for dataset in sorted(os.listdir(evaluation_output_dir)):
         path_to_model = os.path.join(evaluation_output_dir, dataset)
         results[dataset] = {}
-        for model in os.listdir(path_to_model):
+        for model in sorted(os.listdir(path_to_model)):
             path_to_output = os.path.join(evaluation_output_dir, dataset, model, 'evaluation_test.json')
             results[dataset][model] = json.load(open(path_to_output))
 
     dataset_names = list(results.keys())
     model_names = list(results[dataset_names[0]].keys())
-    print(model_names)
+    # print(model_names)
     result_list = []
 
     for metric in metric_names:
