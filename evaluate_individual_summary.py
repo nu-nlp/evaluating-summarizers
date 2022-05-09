@@ -22,7 +22,7 @@ david_datasets_mapping = {
     "govreport": "gov",
 }
 
-DATASETS = ["cnn_dailymail"]
+DATASETS = "cnn_dailymail"
 MODELS = ["TextRank", "LexRank", "Lead", "Random", "bartbase", "bartlarge", "t5small"]
 METRICS = ["sacrebleu", "bleu", "rouge", "bertscore", "jensen_shannon"]
 
@@ -55,12 +55,12 @@ def load_summarization_outputs(
         print(df.shape)
         predictions = df[summary_column].fillna("").tolist()
         references = df[target_column].fillna("").tolist()
-        results = {'bleu': [], 'bertscore': [], 'sacrebleu': [], 'jensen_shannon': [], 'rouge': []}
+
         print(f"Processing summaries for model {summarizer}")
         # print(len(predictions), len(references))
         for metric_name in METRICS:
-
             # load metric
+            results = []
             if metric_name == "bleu":
                 metric = bleu_metric
 
@@ -84,12 +84,10 @@ def load_summarization_outputs(
 
             for id in range(len(predictions)):
                     if predictions[id] != '':
-                        results[metric].append(metric.evaluate([predictions[id]], [references[id]]))
+                        results.append(metric.evaluate([predictions[id]], [references[id]]))
                     else:
-                        results[metric].append(0.0)
-
-        for metric in results.keys():
-            df[metric] = results[metric]
+                        results.append(0.0)
+            df[metric_name] = results
             # df['bleu'] = df.apply(lambda x: evaluate(predictions, references), axis=1)
             # df = pd.DataFrame(summarization_outputs)
 
