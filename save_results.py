@@ -4,7 +4,7 @@ import pandas as pd
 
 
 def json_to_csv(evaluation_output_dir):
-    metric_names = ['sacrebleu', 'bleu', 'bertscore', 'rouge']
+    metric_names = ['sacrebleu', 'bleu', 'bertscore', 'rouge', 'jensen_shannon']
 
     # Stores: {dataset: {model : result, }, dataset2 :
     results = {}
@@ -23,17 +23,18 @@ def json_to_csv(evaluation_output_dir):
 
     for metric in metric_names:
         for model in sorted(model_names):
+            # result_list.append([metric, model]+dataset_names)
             row = [metric, model]
             for dataset in sorted(dataset_names):
-                print(dataset, model)
+                # print(dataset, model)
                 if metric == 'rouge':
                     values = []
                     for variants in results[dataset][model][metric]:
-                        values.append(results[dataset][model][metric][variants])
+                        values.append(round(results[dataset][model][metric][variants],1))
                     row.append(values)
                 else:
                     if metric in results[dataset][model].keys():
-                        row.append(results[dataset][model][metric])
+                        row.append(round(results[dataset][model][metric],1))
                     else:
                         row.append(0)
             result_list.append(row)

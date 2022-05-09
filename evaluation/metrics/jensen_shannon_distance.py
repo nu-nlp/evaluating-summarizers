@@ -77,4 +77,4 @@ class JensenShannonMetric(AbstractMetric):
         # Average the distances to produce a single, final score
         jensen_shannon_avg = np.mean(scores)
 
-        return jensen_shannon_avg
+        return jensen_shannon_avg*100

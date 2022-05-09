@@ -3,9 +3,8 @@ from typing import List
 from pathlib import Path
 import argparse
 import pandas as pd
-import nltk
 from data_utils.data import datasets_mapping
-
+import nltk
 nltk.download("punkt")
 
 from evaluation.extensions import (
@@ -28,7 +27,7 @@ david_datasets_mapping = {
 
 DATASETS = ["cnn_dailymail", "arxiv", "billsum", "govreport"]
 MODELS = ["TextRank", "LexRank", "Lead", "Random", "bartbase", "bartlarge", "t5small"]
-METRICS = ["sacrebleu", "bleu", "rouge", "bertscore"]
+METRICS = ["sacrebleu", "bleu", "rouge", "bertscore", "jensen_shannon"]
 
 def load_summarization_outputs(
     dataset: str,
@@ -146,9 +145,9 @@ if __name__ == "__main__":
         description="Run evaluation metrics on summarization outputs."
     )
 
-    parser.add_argument("--dataset", type=str, nargs="*", default=["cnn_dailymail"])
+    parser.add_argument("--datasets", type=str, nargs="*", default=["cnn_dailymail"])
     parser.add_argument("--all-datasets", action="store_true")
-    parser.add_argument("--summarizer", type=str, nargs="*", default=["TextRank"])
+    parser.add_argument("--summarizers", type=str, nargs="*", default=["TextRank"])
     parser.add_argument("--all-summarizers", action="store_true")
     parser.add_argument(
         "--summarizations-dir",
