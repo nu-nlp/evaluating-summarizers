@@ -30,12 +30,12 @@ summarizations_dir = '/content/drive/MyDrive/NU-NLP/summarization_outputs'
 
 
 def load_summarization_outputs(
-        dataset,
-        summarizers,
-        summary_column,
-        target_column,
-        summarizations_dir,
-        debug
+    summarizations_dir,
+        dataset=DATASETS,
+        summarizers=MODELS,
+        summary_column='summary',
+        target_column='target',
+        debug=False
 ):
 
     for summarizer in summarizers:
@@ -98,4 +98,9 @@ def load_summarization_outputs(
         os.makedirs(output_directory, exist_ok=True)
         filename = "summarization_scores_per_summary"
         df.to_csv(f"{output_directory}/{filename}.csv", index=False)
-    return df
+    return
+
+if __name__ == "__main__":
+
+    results = load_summarization_outputs(summarizations_dir)
+
