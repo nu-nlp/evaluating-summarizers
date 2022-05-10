@@ -42,7 +42,7 @@ python run_summarization.py --dataset cnn_dailymail --summarizer TextRank --summ
 ### Summarization arguments
 
 * `--dataset`: The dataset. Values currently supported: `cnn_dailymail`, `arxiv`, `pubmed`, `reddit_tifu`, `billsum`, `govreport`
-* `--summarizer`: The summarization model. Values currently supported: `LexRank`, `TextRank`, `Random`, `Lead`
+* `--summarizer`: The summarization model. Values currently supported: `LexRank`, `TextRank`, `Random`, `Lead`, `Occams`
 * `--summarizations-dir`: The directory path for the summarization output csv files. Default is `summarization_outputs` and that is why we have `--dataset` and `--summarizer` as input. In practice this will probably be the relative path of the [shared NU-NLP/summarization_outputs directory](https://drive.google.com/drive/folders/1yDzktsBUhMsS8vzWREKk54XO34ljQGin?usp=sharing)
 * `--debug`: include this boolean flag to limit the dataset to the first 5 documents. This will keep the summarization short and help you iterate quicker when developing.
 ```python3
@@ -70,7 +70,7 @@ python evaluate.py --summarizations-dir optimization_based/summarization_outputs
 ```python3
 python evaluate.py --dataset cnn_dailymail --summarizer TextRank --metrics bleu
 ```
-* `--summarizer`: The summarization model. Values currently supported: `LexRank`, `TextRank`, `Random`, `Lead` and the neural models. For the summarizers, dataset and summarizer are used to find the output files. These arguments also help name the output json. Your code won't break if you put a neural model here, so long as you make sure the output csv for your model can be read. (see description of `--summarizations-dir`) 
+* `--summarizer`: The summarization model. Values currently supported: `LexRank`, `TextRank`, `Random`, `Lead`, `Occams` and the neural models. For the summarizers, dataset and summarizer are used to find the output files. These arguments also help name the output json. Your code won't break if you put a neural model here, so long as you make sure the output csv for your model can be read. (see description of `--summarizations-dir`) 
 Here is an example for `billsum_bartbase_197.csv`:
 ```python3
 python evaluate.py --dataset billsum --summarizer bartbase

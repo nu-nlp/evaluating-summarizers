@@ -26,7 +26,7 @@ david_datasets_mapping = {
 }
 
 DATASETS = ["cnn_dailymail", "arxiv", "billsum", "govreport"]
-MODELS = ["TextRank", "LexRank", "Lead", "Random", "bartbase", "bartlarge", "t5small"]
+MODELS = ["TextRank", "LexRank", "Lead", "Random", "Occams", "bartbase", "bartlarge", "t5small"]
 METRICS = ["sacrebleu", "bleu", "rouge", "bertscore", "jensen_shannon"]
 
 def load_summarization_outputs(
@@ -37,7 +37,7 @@ def load_summarization_outputs(
     summarizations_dir: Path,
     debug: bool,
 ):
-    if summarizer in ["TextRank", "LexRank", "Lead", "Random"]:
+    if summarizer in ["TextRank", "LexRank", "Lead", "Random", "Occams"]:
         # optimization based models outputs will be found with this code
         filename = "summarization_test_debug.csv" if debug else "summarization_test.csv"
         file = summarizations_dir / dataset / summarizer / filename
