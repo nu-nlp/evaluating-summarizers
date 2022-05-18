@@ -54,14 +54,14 @@ python run_summarization.py --dataset cnn_dailymail --summarizer TextRank --debu
 Run evaluation on a summarizer's outputs for a given dataset and save the outputs to a json with the following commands:  
 ```python3
 # For the extractive models:
-python evaluate.py --summarizations-dir optimization_based/summarization_outputs --scores-dir evaluation/evaluation_outputs --dataset billsum --summarizer TextRank --metrics bleu sacrebleu rouge bertscore
+python evaluate.py --summarizations-dir optimization_based/summarization_outputs --scores-dir evaluation/evaluation_outputs --dataset billsum --summarizer TextRank --metrics bleu sacrebleu rouge bertscore jensen_shannon avg_gen_length
 
 # For the neural models:
-python evaluate.py --summarizations-dir optimization_based/summarization_outputs --scores-dir evaluation/evaluation_outputs --dataset billsum --summarizer bartbase --metrics bleu sacrebleu rouge bertscore 
+python evaluate.py --summarizations-dir optimization_based/summarization_outputs --scores-dir evaluation/evaluation_outputs --dataset billsum --summarizer bartbase --metrics bleu sacrebleu rouge bertscore jensen_shannon avg_gen_length
 ```
 To test if the code works, use the `--debug` flag to save time. It will run the code on 5 samples:
 ```python3
-python evaluate.py --summarizations-dir optimization_based/summarization_outputs --scores-dir evaluation/evaluation_outputs --dataset billsum --summarizer TextRank --metrics bleu sacrebleu rouge bertscore --debug
+python evaluate.py --summarizations-dir optimization_based/summarization_outputs --scores-dir evaluation/evaluation_outputs --dataset billsum --summarizer TextRank --metrics bleu sacrebleu rouge bertscore jensen_shannon avg_gen_length --debug
 ```
 
 ### Understanding the evaluation script arguments
@@ -79,7 +79,7 @@ python evaluate.py --dataset billsum --summarizer bartbase
 * `--scores-dir`: The directory path for the scores output json files. Default is `evaluating-summarizers/evaluation/evaluation_outputs`.  You should probably make sure this gets saved in [the shared NU-NLP/evaluation_outputs directory](https://drive.google.com/drive/folders/1thiUxz5DbP2-3SIWegHBJcEHsJ6WTpRl?usp=sharing)
 * `--summary-column`: in your summarization output csv file, what is the column header for output summaries. Default value is `"summary"`.
 * `--target-column`: in your summarization output csv file, what is the column header for target summaries. Default value is `"target"`. For David's `"label"` column, set this to `"label"`  
-* `--metrics`: The list of metrics you want to compute. Metrics supported are `bleu`, `sacrebleu`, `rouge`, `bertscore`. Default is `bleu`, `sacrebleu`, `rouge` because `bertscore` can be slow without GPU. Here is an example:
+* `--metrics`: The list of metrics you want to compute. Metrics supported are `bleu`, `sacrebleu`, `rouge`, `bertscore`, `jensen_shannon`, `avg_gen_length`. Default is `bleu`, `sacrebleu`, `rouge`, `jensen_shannon`, `avg_gen_length` because `bertscore` can be slow without GPU. Here is an example:
 * `--debug`: include this boolean flag to limit the output summaries to the first 5 documents. This will keep the evaluation short and help you iterate 
 
 

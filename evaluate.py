@@ -12,7 +12,8 @@ from evaluation.extensions import (
     sacrebleu_metric,
     rouge_metric,
     bertscore_metric,
-    jensen_shannon_metric
+    jensen_shannon_metric,
+    avg_gen_length_metric
     # mauve_metric,
 )
 
@@ -27,7 +28,7 @@ david_datasets_mapping = {
 
 DATASETS = ["cnn_dailymail", "arxiv", "billsum", "govreport"]
 MODELS = ["TextRank", "LexRank", "Lead", "Random", "Occams", "bartbase", "bartlarge", "t5small"]
-METRICS = ["sacrebleu", "bleu", "rouge", "bertscore", "jensen_shannon"]
+METRICS = ["sacrebleu", "bleu", "rouge", "bertscore", "jensen_shannon", "avg_gen_length"]
 
 def load_summarization_outputs(
     dataset: str,
@@ -122,6 +123,9 @@ def evaluate(
                 elif metric_name == "jensen_shannon":
                     metric = jensen_shannon_metric
 
+                elif metric_name == "avg_gen_length":
+                    metric = avg_gen_length_metric
+
                 # evaluate summaries
                 scores = metric.evaluate(predictions=predictions, references=references)
 
@@ -158,7 +162,7 @@ if __name__ == "__main__":
     parser.add_argument("--summary-column", type=str, default="summary")
     parser.add_argument("--target-column", type=str, default="target")
     parser.add_argument(
-        "--metrics", type=str, nargs="*", default=["rouge", "sacrebleu", "bleu"]
+        "--metrics", type=str, nargs="*", default=["rouge", "sacrebleu", "bleu", "jensen_shannon", "avg_gen_length"]
     )
     parser.add_argument("--all-metrics", action="store_true")
     parser.add_argument("--debug", action="store_true")

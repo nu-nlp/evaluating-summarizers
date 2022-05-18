@@ -3,6 +3,7 @@ from evaluation.metrics.sacrebleu import SacrebleuMetric
 from evaluation.metrics.rouge import RougeMetric
 from evaluation.metrics.bertscore import BertscoreMetric
 from evaluation.metrics.jensen_shannon_distance import JensenShannonMetric
+from evaluation.metrics.avg_gen_length import AvgGenLengthMetric
 # from evaluation.metrics.mauve import MauveMetric
 
 __all__ = (
@@ -10,6 +11,7 @@ __all__ = (
     "SacrebleuMetric",
     "RougeMetric",
     "BertscoreMetric",
-    "JensenShannonMetric"
+    "JensenShannonMetric",
+    "AvgGenLengthMetric"
     # "MauveMetric",
 )
