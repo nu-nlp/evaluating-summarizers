@@ -3,6 +3,7 @@ from optimization_based.summarizers.lead import LeadSummarizer
 from optimization_based.summarizers.random import RandomSummarizer
 from optimization_based.summarizers.textrank import TextRankSummarizer
 from optimization_based.summarizers.lexrank import LexRankSummarizer
+from optimization_based.summarizers.occams import OccamsSummarizer
 
 
 __all__ = (
@@ -11,4 +12,5 @@ __all__ = (
     "RandomSummarizer",
     "TextRankSummarizer",
     "LexRankSummarizer",
+    "OccamsSummarizer"
 )

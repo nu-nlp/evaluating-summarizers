@@ -3,7 +3,8 @@ from evaluation.metrics import (
     SacrebleuMetric,
     RougeMetric,
     BertscoreMetric,
-    JensenShannonMetric
+    JensenShannonMetric,
+    AvgGenLengthMetric
     # MauveMetric
 )
 
@@ -12,4 +13,5 @@ sacrebleu_metric = SacrebleuMetric()
 rouge_metric = RougeMetric()
 bertscore_metric = BertscoreMetric()
 jensen_shannon_metric = JensenShannonMetric()
+avg_gen_length_metric = AvgGenLengthMetric()
 # mauve_metric = MauveMetric()

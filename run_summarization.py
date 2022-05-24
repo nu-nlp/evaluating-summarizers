@@ -16,6 +16,7 @@ from optimization_based.extensions import (
     lexrank_summarizer,
     lead_summarizer,
     random_summarizer,
+    occams_summarizer,
     abstract_summarizer,
 )
 
@@ -24,6 +25,7 @@ summarization_length_mapping = {
     "LexRank": "sentence count",
     "Lead": "word count",
     "Random": "word count",
+    "Occams": "word count"
 }
 
 
@@ -86,6 +88,9 @@ def main(
 
     elif summarizer == "Random":
         model = random_summarizer
+
+    elif summarizer == "Occams":
+        model = occams_summarizer
 
     else:
         model = lead_summarizer
