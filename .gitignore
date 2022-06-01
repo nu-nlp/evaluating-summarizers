@@ -6,3 +6,5 @@
 __pycache__
 optimization_based/summarization_outputs
 evaluation_outputs
+summarization_outputs
+summarization_output
