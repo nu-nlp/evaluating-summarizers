@@ -51,7 +51,7 @@ def load_summarization_outputs(
 
         # Read the summarization outputs into  dataframe
         df = pd.read_csv(file, nrows=100)
-        df = df[['target', 'summary']]
+        df = df[[target_column, summary_column]]
         print(df.shape)
         predictions = df[summary_column].fillna("").tolist()
         references = df[target_column].fillna("").tolist()

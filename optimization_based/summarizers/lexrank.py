@@ -2,7 +2,6 @@ from typing import List
 import numpy as np
 from lexrank import LexRank, STOPWORDS
 from nltk import sent_tokenize, word_tokenize
-
 from optimization_based.summarizers.base import AbstractSummarizer
 
 
@@ -43,14 +42,12 @@ class LexRankSummarizer(AbstractSummarizer):
 
             sentence = sentences[sentence_index]
             sentence_word_count = len(word_tokenize(sentence))
-
             # if adding sentence leads to less accurate word count, stop adding sentences
             ## Checks if the inclusion of the sentence gives a better approximation to the word parameter
             if abs(length - summary_word_count - sentence_word_count) > abs(
                 length - summary_word_count
             ):
                 break
-            
             selected_sentences.append(sentence)
             summary_word_count += sentence_word_count
         

@@ -45,20 +45,21 @@ def load_dataset_huggingface(dataset: str):
         # data = load_dataset(dataset_name, download_mode="force_redownload")
         data = load_dataset(dataset_name)
 
-    if dataset_name == "redit_tifu":
+    if dataset_name == "reddit_tifu":
         (
-            data["train"][document_key],
-            data["test"][document_key],
-            data["train"][summary_key],
-            data["test"][summary_key],
+            train_doc,
+            test_doc,
+            train_sum,
+            test_sum,
         ) = train_test_split(
             data["train"][document_key],
-            data[summary_key],
+            data["train"][summary_key],
             #TODO: PRIORITY. Make sure this runs and pick a value for test_size
             # based on test_size you see in slides
             test_size=0.1,
             random_state=42,
         )
+        return test_doc, test_sum, length
 
     return data["test"][document_key], data["test"][summary_key], length
 

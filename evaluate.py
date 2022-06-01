@@ -27,7 +27,7 @@ david_datasets_mapping = {
 }
 
 DATASETS = ["cnn_dailymail", "arxiv", "billsum", "govreport"]
-MODELS = ["TextRank", "LexRank", "Lead", "Random", "Occams", "bartbase", "bartlarge", "t5small"]
+MODELS = ["TextRank", "LexRank", "Lead", "Random", "bartbase", "bartlarge", "t5small"]
 METRICS = ["sacrebleu", "bleu", "rouge", "bertscore", "jensen_shannon", "avg_gen_length"]
 
 def load_summarization_outputs(

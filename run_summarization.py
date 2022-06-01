@@ -5,7 +5,7 @@ import argparse
 
 import pandas as pd
 from tqdm import tqdm
-from nltk import word_tokenize
+from nltk import word_tokenize, sent_tokenize
 import nltk
 nltk.download('punkt')
 from data_utils.data import load_dataset_huggingface
@@ -20,13 +20,21 @@ from optimization_based.extensions import (
     abstract_summarizer,
 )
 
+# summarization_length_mapping = {
+#     "TextRank": "word count",
+#     "LexRank": "sentence count",
+#     "Lead": "word count",
+#     "Random": "word count",
+#     "Occams": "word count"
+# }
+
 summarization_length_mapping = {
     "TextRank": "word count",
     "LexRank": "sentence count",
     "Lead": "word count",
-    "Random": "word count",
-    "Occams": "word count"
+    "Random": "word count"
 }
+
 
 
 def summarize_document(text: str, length: int, summarizer: abstract_summarizer) -> Dict:
@@ -72,16 +80,20 @@ def main(
     # Make the data
     documents, summaries, length = load_dataset_huggingface(dataset=dataset)
 
+    if debug:
+        documents, summaries = documents[:5], summaries[:5]
+
     # Set up/train summarizer
     if summarizer == "TextRank":
         model = textrank_summarizer
 
     elif summarizer == "LexRank":
+        documents_as_sentences = [sent_tokenize(document) for document in documents]
         model = lexrank_summarizer
         # start timer
         start = datetime.now()
         print(f"Start training LexRank")
-        model.fit(documents=documents)
+        model.fit(documents=documents_as_sentences)
         # end timer
         end = datetime.now()
         print(f"LexRank training time on {dataset}= {end-start}")
@@ -96,9 +108,6 @@ def main(
         model = lead_summarizer
 
     # TODO: add other summarizers
-
-    if debug:
-        documents, summaries = documents[:5], summaries[:5]
 
     summarization_outputs = []
 

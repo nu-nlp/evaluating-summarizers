@@ -14,4 +14,3 @@ pandas
 tqdm
 black
 jupyterlab
-occams
