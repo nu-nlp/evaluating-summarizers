@@ -26,8 +26,8 @@ david_datasets_mapping = {
     "govreport": "gov",
 }
 
-DATASETS = ["cnn_dailymail", "arxiv", "billsum", "govreport"]
-MODELS = ["TextRank", "LexRank", "Lead", "Random", "bartbase", "bartlarge", "t5small"]
+# DATASETS = ["cnn_dailymail", "arxiv", "billsum", "govreport"]
+# MODELS = ["TextRank", "LexRank", "Lead", "Random", "bartbase", "bartlarge", "t5small"]
 DATASETS = ["cnn_dailymail", "arxiv", "billsum", "govreport", "pubmed", "reddit_tifu"]
 MODELS = ["TextRank", "LexRank", "Lead", "Random", "Occams", "bartbase", "bartlarge", "t5small", "t5base", "pegasuslarge", "pegasusxsum"]
 METRICS = ["sacrebleu", "bleu", "rouge", "bertscore", "jensen_shannon", "avg_gen_length"]
