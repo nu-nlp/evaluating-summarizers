@@ -8,3 +8,6 @@ optimization_based/summarization_outputs
 evaluation_outputs
 summarization_outputs
 summarization_output
+summarization_outputs_nltk_tokenize
+*.ipynb
+*.csv

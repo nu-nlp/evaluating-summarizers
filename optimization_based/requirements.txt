@@ -9,8 +9,9 @@ numpy
 scipy
 scikit-learn
 summa
-sumy
 pandas
 tqdm
 black
 jupyterlab
+scipy>=1.0.0
+# occams
