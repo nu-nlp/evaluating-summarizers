@@ -28,7 +28,9 @@ summarization_length_mapping = {
     "Occams": "word count"
 }
 
-def summarize_document(text: str, length: int, summarizer: abstract_summarizer) -> Dict:
+def summarize_document(text: str,
+                       length: int,
+                       summarizer: abstract_summarizer) -> Dict:
     """Summarizes the input text
     Args:
         text (str): Input text to summarize
@@ -61,15 +63,22 @@ def summarize_document(text: str, length: int, summarizer: abstract_summarizer) 
     return summary_output
 
 
-def main(
-    dataset: str,
-    summarizer: str,
-    summarizations_dir: Path,
-    debug: bool = False,
-    # save_output: bool = False
-):
-    # Make the data
-    documents, summaries, length = load_dataset_huggingface(dataset=dataset)
+def main(training_dataset: str,
+         evaluation_dataset: str,
+         summarizer: str,
+         target_length: int,
+         summarizations_dir: Path,
+         debug: bool = False) -> None:
+
+    # Load in the evaluation dataset
+    documents, summaries, length = load_dataset_huggingface(dataset=evaluation_dataset)
+
+    # Set the training dataset, if none was specified by the user
+    if training_dataset is None:
+        training_dataset = evaluation_dataset
+
+    # Use the target_length specified by the user
+    length = target_length
 
     if debug:
         documents, summaries = documents[:5], summaries[:5]
@@ -81,13 +90,12 @@ def main(
     elif summarizer == "LexRank":
         documents_as_sentences = [sent_tokenize(document) for document in documents]
         model = lexrank_summarizer
-        # start timer
-        start = datetime.now()
+
+        start = datetime.now() # start timer
         print(f"Start training LexRank")
         model.fit(documents=documents_as_sentences)
-        # end timer
-        end = datetime.now()
-        print(f"LexRank training time on {dataset}= {end-start}")
+        end = datetime.now() # end timer
+        print(f"LexRank training time on {training_dataset}= {end-start}")
 
     elif summarizer == "Random":
         model = random_summarizer
@@ -98,19 +106,19 @@ def main(
     else:
         model = lead_summarizer
 
-    # TODO: add other summarizers
-
+    # Generate the summaries
+    print(f"Generating summaries with {summarizer} (\"trained\" on {training_dataset}) with target length of {target_length} on evaluation dataset {evaluation_dataset}")
     summarization_outputs = []
-
     for document, target_summary in tqdm(zip(documents, summaries)):
-        summary_output = summarize_document(
-            text=document, length=length, summarizer=model
-        )
+        summary_output = summarize_document(text=document, length=length, summarizer=model)
         # summary_output = summarize(text=document, length=length, model_name=summarizer)
+
+        # Add "columns" for target summary and the word count of that summary
         summary_output["target"] = target_summary
         summary_output["target_word_count"] = length
         summarization_outputs.append(summary_output)
 
+    # Create a Pandas dataframe to store the generated summaries
     df = pd.DataFrame(summarization_outputs)
 
     column_names = [
@@ -125,29 +133,35 @@ def main(
     ]
     df = df.reindex(columns=column_names)
 
-    output_directory = summarizations_dir / dataset / summarizer
-    output_directory.mkdir(parents=True, exist_ok=True)
-    filename = "summarization_test_debug" if debug else "summarization_test"
-    df.to_csv(f"{output_directory}/{filename}.csv", index=False)
+    # Get the directory/path where the generated summaries will be saved
+    summary_filename = f"{training_dataset}_{evaluation_dataset}_{summarizer}_{target_length}"
+    if debug:
+        summary_filename += "_debug"
+
+    # Save the generated summaries
+    summarizations_dir.mkdir(parents=True, exist_ok=True)
+    final_output_path = f"{summarizations_dir}/{summary_filename}.csv"
+    df.to_csv(final_output_path, index=False)
+    print(f"Wrote summaries to: {final_output_path}")
 
     return
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Run summarization models on datasets."
-    )
+    parser = argparse.ArgumentParser(description="Generate summaries using the specified pre-neural models and datasets.")
 
-    parser.add_argument("--dataset", type=str, default="cnn_dailymail")
+    parser.add_argument("--training_dataset", type=str, default=None)
+    parser.add_argument("--evaluation_dataset", type=str, default="arxiv")
     parser.add_argument("--summarizer", type=str, default="TextRank")
-    parser.add_argument(
-        "--summarizations-dir",
-        type=Path,
-        default=Path("optimization_based/summarization_outputs"),
-    )
+    parser.add_argument("--target_length", type=int, default=200)
+
+    # Directory arguments
+    parser.add_argument("--summarizations_dir", type=Path, default=Path("evaluation/generated_summaries"))
+
+    # Debug arguments
     parser.add_argument("--debug", action="store_true")
     # parser.add_argument("--save-output", action="store_true")
 
+    # Parse the arguments and run the script
     args = parser.parse_args()
-
     main(**dict(args._get_kwargs()))

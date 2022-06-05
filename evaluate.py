@@ -126,13 +126,13 @@ def evaluate_one_summary_file(summarizations_dir: Path,
 
     # Get the directory where the evaluation results will be saved and the filename for the results
     results_dir.mkdir(parents=True, exist_ok=True)
-
     results_filename = summary_filename
     if debug:
         results_filename += "_debug"
     if target_column == "label":
         results_filename += "_label"
 
+    # Save the results
     with open(results_dir / f"{results_filename}.json", "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=4)
 
