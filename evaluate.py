@@ -73,7 +73,7 @@ def evaluate_one_summary_file(summarizations_dir: Path,
                               metrics: List[str],
                               summary_column: str,
                               target_column: str,
-                              debug: bool):
+                              debug: bool) -> None:
 
     # Get the path of the for the summary csv file to evaluate
     # Note that the file format consists of four properties separated by underscores:
@@ -133,8 +133,12 @@ def evaluate_one_summary_file(summarizations_dir: Path,
         results_filename += "_label"
 
     # Save the results
-    with open(results_dir / f"{results_filename}.json", "w", encoding="utf-8") as f:
+    final_output_path = results_dir / f"{results_filename}.json"
+    with open(final_output_path, "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=4)
+    print(f"Finished. Wrote evaluation results to: {final_output_path}")
+
+    return None
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run evaluation metrics on summarization outputs.")

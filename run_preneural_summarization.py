@@ -142,9 +142,9 @@ def main(training_dataset: str,
     summarizations_dir.mkdir(parents=True, exist_ok=True)
     final_output_path = f"{summarizations_dir}/{summary_filename}.csv"
     df.to_csv(final_output_path, index=False)
-    print(f"Wrote summaries to: {final_output_path}")
+    print(f"Finished. Wrote generated summaries to: {final_output_path}")
 
-    return
+    return None
 
 
 if __name__ == "__main__":
