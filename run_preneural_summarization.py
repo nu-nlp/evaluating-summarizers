@@ -11,38 +11,22 @@ nltk.download('punkt')
 from data_utils.data import load_dataset_huggingface
 
 
-# from optimization_based.extensions import (
-#     textrank_summarizer,
-#     lexrank_summarizer,
-#     lead_summarizer,
-#     random_summarizer,
-#     occams_summarizer,
-#     abstract_summarizer,
-# )
 from optimization_based.extensions import (
     textrank_summarizer,
     lexrank_summarizer,
     lead_summarizer,
     random_summarizer,
+    occams_summarizer,
     abstract_summarizer,
 )
-
-# summarization_length_mapping = {
-#     "TextRank": "word count",
-#     "LexRank": "sentence count",
-#     "Lead": "word count",
-#     "Random": "word count",
-#     "Occams": "word count"
-# }
 
 summarization_length_mapping = {
     "TextRank": "word count",
     "LexRank": "sentence count",
     "Lead": "word count",
-    "Random": "word count"
+    "Random": "word count",
+    "Occams": "word count"
 }
-
-
 
 def summarize_document(text: str, length: int, summarizer: abstract_summarizer) -> Dict:
     """Summarizes the input text

@@ -14,4 +14,4 @@ tqdm
 black
 jupyterlab
 scipy>=1.0.0
-# occams
+occams
