@@ -126,7 +126,7 @@ def evaluate_one_summary_file(summarizations_dir: Path,
 
     # Get the directory where the evaluation results will be saved and the filename for the results
     results_dir.mkdir(parents=True, exist_ok=True)
-    results_filename = summary_filename
+    results_filename = summary_filename + "_results"
     if debug:
         results_filename += "_debug"
     if target_column == "label":
