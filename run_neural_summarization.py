@@ -89,9 +89,6 @@ class OutputArguments:
     summarizer: str = field(
         metadata={"help": "Name of the summarizer that is generating the summaries."}
     )
-    target_length: int = field(
-        metadata={"help": "The target length of the generated summaries."}
-    )
 
 @dataclass
 class ModelArguments:
@@ -623,7 +620,7 @@ def main():
         my_df = pd.DataFrame(my_list, columns=["target", "label", "summary"])
 
         # Get the file path for where the generated summaries will be written
-        summary_filename = f"{output_args.training_dataset}_{output_args.evaluation_dataset}_{output_args.summarizer}_{output_args.target_length}"
+        summary_filename = f"{output_args.training_dataset}_{output_args.evaluation_dataset}_{output_args.summarizer}_{data_args.max_target_length}"
         output_args.summarizations_dir.mkdir(parents=True, exist_ok=True)
         final_output_path = f"{output_args.summarizations_dir}/{summary_filename}.csv"
         my_df.to_csv(final_output_path, index=False)
