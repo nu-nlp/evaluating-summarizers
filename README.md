@@ -43,7 +43,7 @@ Note that by default, the generated summaries are saved to: `evaluating-summariz
 * `--training_dataset`: The dataset which a method could be "trained" against. Will almost always be set to the same dataset as `--evaluation_dataset`
 * `--summarizer`: The summarization model. Values currently supported: `LexRank`, `TextRank`, `Random`, `Lead`, `Occams`
 * `--target_length`: The number of tokens the summarizer should aim to generate for each summary.
-* `--summarizations-dir`: The directory path for the summarization output csv files. Default argument is `evaluation/generated_summaries`
+* `--summarizations_dir`: The directory path for the summarization output csv files. Default argument is `evaluation/generated_summaries`
 * `--debug`: Include this boolean flag to limit the dataset to the first 5 documents. This will keep the summarization short and help you iterate quicker when developing.
 
 ## 3. Run Evaluation Scripts on any Summarizer Output *(pre-neural and neural)*
