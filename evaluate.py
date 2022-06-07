@@ -1,5 +1,5 @@
 import json
-from typing import List
+from typing import List, Tuple
 from pathlib import Path
 import argparse
 import pandas as pd
@@ -26,31 +26,26 @@ david_datasets_mapping = {
     "govreport": "gov",
 }
 
-# DATASETS = ["cnn_dailymail", "arxiv", "billsum", "govreport"]
-# MODELS = ["TextRank", "LexRank", "Lead", "Random", "bartbase", "bartlarge", "t5small"]
 DATASETS = ["cnn_dailymail", "arxiv", "billsum", "govreport", "pubmed", "reddit_tifu"]
 MODELS = ["TextRank", "LexRank", "Lead", "Random", "Occams", "bartbase", "bartlarge", "t5small", "t5base", "pegasuslarge", "pegasusxsum"]
 METRICS = ["sacrebleu", "bleu", "rouge", "bertscore", "jensen_shannon", "avg_gen_length"]
 
-def load_summarization_outputs(
-    dataset: str,
-    summarizer: str,
-    summary_column: str,
-    target_column: str,
-    summarizations_dir: Path,
-    debug: bool,
-):
-    if summarizer in ["TextRank", "LexRank", "Lead", "Random", "Occams"]:
-        # optimization based models outputs will be found with this code
-        filename = "summarization_test_debug.csv" if debug else "summarization_test.csv"
-        file = summarizations_dir / dataset / summarizer / filename
-    else:
-        # To run this on David's CSVs: e.g. billsum_bartbase_197.csv
-        filename = f"{david_datasets_mapping[dataset]}_{summarizer}_{datasets_mapping[dataset][4]}.csv"
-        file = summarizations_dir / filename
-    
+def load_summarization_outputs(summary_file: Path,
+                               summary_column: str,
+                               target_column: str,
+                               debug: bool) -> Tuple[List[str], List[str]]:
+
+    # if summarizer in ["TextRank", "LexRank", "Lead", "Random", "Occams"]:
+    #     # optimization based models outputs will be found with this code
+    #     filename = "summarization_test_debug.csv" if debug else "summarization_test.csv"
+    #     file = summarizations_dir / dataset / summarizer / filename
+    # else:
+    #     # To run this on David's CSVs: e.g. billsum_bartbase_197.csv
+    #     filename = f"{david_datasets_mapping[dataset]}_{summarizer}_{datasets_mapping[dataset][4]}.csv"
+    #     file = summarizations_dir / filename
+
     # Read the summarization outputs into  dataframe
-    df = pd.read_csv(file)
+    df = pd.read_csv(summary_file)
 
     # TextRank returns empty summaries if the document does not have enough sentences
     # It seems to occur with bad sentence tokenization and is probably fixable in the future
@@ -69,107 +64,105 @@ def load_summarization_outputs(
 
     return predictions, references
 
+def evaluate_one_summary_file(summarizations_dir: Path,
+                              training_dataset: str,
+                              evaluation_dataset: str,
+                              summarizer: str,
+                              target_length: int,
+                              results_dir: Path,
+                              metrics: List[str],
+                              summary_column: str,
+                              target_column: str,
+                              debug: bool) -> None:
 
-def evaluate(
-    summarizations_dir: Path,
-    scores_dir: Path,
-    datasets: str,
-    summary_column: str,
-    target_column: str,
-    summarizers: str,
-    metrics: List[str],
-    all_summarizers : bool,
-    all_datasets : bool,
-    all_metrics : bool,
-    debug: bool,
-):
-    # datasets = [dataset]
-    # summarizers = [summarizer]
+    # Get the path of the for the summary csv file to evaluate
+    # Note that the file format consists of four properties separated by underscores:
+    #           <training_dataset>_<testing_dataset>_<model/method>_<target_length>.csv)
+    summary_filename = f"{training_dataset}_{evaluation_dataset}_{summarizer}_{target_length}"
+    full_summary_filename = summary_filename + ".csv"
+    summary_filepath = summarizations_dir / full_summary_filename
 
-    if all_datasets == True:
-        datasets = DATASETS
-    if all_summarizers == True:
-        summarizers = MODELS
-    if all_metrics == True:
-        metrics = METRICS
+    # Load the predictions and gold references from file
+    predictions, references = load_summarization_outputs(summary_filepath, summary_column, target_column, debug)
 
-    for dataset in datasets:
-        for summarizer in summarizers:
-            predictions, references = load_summarization_outputs(
-                dataset, summarizer, summary_column, target_column, summarizations_dir, debug
-            )
+    # Create a dictionary for the metric results
+    results = {"summarizer": summarizer,
+               "training_dataset": training_dataset,
+               "evaluation_dataset": evaluation_dataset,
+               "target_length": target_length,
+               "summary_file": str(summary_filepath)}
 
-            # create a dictionary for the metric results
-            results = {"summarizer": summarizer, "dataset": dataset}
-            print(f"Running summarizer {summarizer} on dataset {dataset}")
-            for metric_name in metrics:
+    # Begin running the evaluation metrics
+    print(f"Evaluating summaries generated by {summarizer} (trained on {training_dataset}) with a target length of {target_length} on evaluation dataset {evaluation_dataset}")
+    for metric_name in metrics:
+        # load metric
+        if metric_name == "bleu":
+            metric = bleu_metric
 
-                # load metric
-                if metric_name == "bleu":
-                    metric = bleu_metric
+        elif metric_name == "sacrebleu":
+            metric = sacrebleu_metric
 
-                elif metric_name == "sacrebleu":
-                    metric = sacrebleu_metric
+        elif metric_name == "rouge":
+            metric = rouge_metric
 
-                elif metric_name == "rouge":
-                    metric = rouge_metric
+        elif metric_name == "bertscore":
+            metric = bertscore_metric
 
-                elif metric_name == "bertscore":
-                    metric = bertscore_metric
+        # TODO: NOT PRIORITY. Implement these two successfully
+        # Mauve does not work yet
+        # elif metric_name == "mauve":
+        #   metric = mauve_metric
 
-                # TODO: NOT PRIORITY. Implement these two successfully
-                # Mauve does not work yet
-                # elif metric_name == "mauve":
-                #   metric = mauve_metric
+        elif metric_name == "jensen_shannon":
+            metric = jensen_shannon_metric
 
-                elif metric_name == "jensen_shannon":
-                    metric = jensen_shannon_metric
+        elif metric_name == "avg_gen_length":
+            metric = avg_gen_length_metric
 
-                elif metric_name == "avg_gen_length":
-                    metric = avg_gen_length_metric
+        # evaluate summaries
+        scores = metric.evaluate(predictions=predictions, references=references)
 
-                # evaluate summaries
-                scores = metric.evaluate(predictions=predictions, references=references)
+        results[metric_name] = scores
 
-                results[metric_name] = scores
+    # Get the directory where the evaluation results will be saved and the filename for the results
+    results_dir.mkdir(parents=True, exist_ok=True)
+    results_filename = summary_filename + "_results"
+    if debug:
+        results_filename += "_debug"
+    if target_column == "label":
+        results_filename += "_label"
 
-            output_directory = scores_dir / dataset / summarizer
-            output_directory.mkdir(parents=True, exist_ok=True)
+    # Save the results
+    final_output_path = results_dir / f"{results_filename}.json"
+    with open(final_output_path, "w", encoding="utf-8") as f:
+        json.dump(results, f, ensure_ascii=False, indent=4)
+    print(f"Finished. Wrote evaluation results to: {final_output_path}")
 
-            filename = "evaluation_test_debug" if debug else "evaluation_test"
-            if target_column == "label":
-                filename = "evaluation_test_debug_label" if debug else "evaluation_test_label"
-
-            with open(output_directory / f"{filename}.json", "w", encoding="utf-8") as f:
-                json.dump(results, f, ensure_ascii=False, indent=4)
-
-    return results
-
+    return None
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Run evaluation metrics on summarization outputs."
-    )
+    parser = argparse.ArgumentParser(description="Run evaluation metrics on summarization outputs.")
 
-    parser.add_argument("--datasets", type=str, nargs="*", default=["cnn_dailymail"])
-    parser.add_argument("--all-datasets", action="store_true")
-    parser.add_argument("--summarizers", type=str, nargs="*", default=["TextRank"])
-    parser.add_argument("--all-summarizers", action="store_true")
-    parser.add_argument(
-        "--summarizations-dir",
-        type=Path,
-        default=Path("optimization_based/summarization_outputs"),
-    )
-    parser.add_argument("--scores-dir", type=Path, default=Path("evaluation/evaluation_outputs"))
-    parser.add_argument("--summary-column", type=str, default="summary")
-    parser.add_argument("--target-column", type=str, default="target")
-    parser.add_argument(
-        "--metrics", type=str, nargs="*", default=["rouge", "sacrebleu", "bleu", "jensen_shannon", "avg_gen_length"]
-    )
-    parser.add_argument("--all-metrics", action="store_true")
+    parser.add_argument("--training_dataset", type=str, default="arxiv")
+    parser.add_argument("--evaluation_dataset", type=str, default="arxiv")
+    parser.add_argument("--summarizer", type=str, default="TextRank")
+    parser.add_argument("--target_length", type=int, default=200)
+
+    # Directory arguments
+    parser.add_argument("--summarizations_dir", type=Path, default=Path("evaluation/generated_summaries"))
+    parser.add_argument("--results_dir", type=Path, default=Path("evaluation/evaluation_results"))
+
+    # Metrics arguments
+    parser.add_argument("--metrics", type=str, nargs="*", default=["rouge", "sacrebleu", "bleu", "jensen_shannon", "avg_gen_length"])
+    # parser.add_argument("--all_metrics", action="store_true")
+
+    # Column arguments
+    parser.add_argument("--summary_column", type=str, default="summary")
+    parser.add_argument("--target_column", type=str, default="target")
+
+    # Debug arguments
     parser.add_argument("--debug", action="store_true")
 
+    # Parse the arguments and run the script
     args = parser.parse_args()
-
-    results = evaluate(**dict(args._get_kwargs()))
-
+    results = evaluate_one_summary_file(**dict(args._get_kwargs()))

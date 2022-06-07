@@ -5,12 +5,20 @@ from sklearn.model_selection import train_test_split
 # These numbers were on the slides and that's what David used.
 datasets_mapping = {
     # "big_patent": ("description", "abstract"),
-    "cnn_dailymail": ("cnn_dailymail", "article", "highlights", "3.0.0", 56),
     "arxiv": ("ccdv/arxiv-summarization", "article", "abstract", "", 200),
-    "pubmed": ("ccdv/pubmed-summarization", "article", "abstract", "", 215),
-    "reddit_tifu": ("reddit_tifu", "documents", "tldr", "long", 23),
+
     "billsum": ("billsum", "text", "summary", "", 197),
+
+    "cnn": ("cnn_dailymail", "article", "highlights", "3.0.0", 56),
+    "cnn_dailymail": ("cnn_dailymail", "article", "highlights", "3.0.0", 56),
+
+    "gov": ("ccdv/govreport-summarization", "report", "summary", "", 542),
     "govreport": ("ccdv/govreport-summarization", "report", "summary", "", 542),
+
+    "pubmed": ("ccdv/pubmed-summarization", "article", "abstract", "", 215),
+
+    "reddit_tifu": ("reddit_tifu", "documents", "tldr", "long", 23),
+    "tifu": ("reddit_tifu", "documents", "tldr", "long", 23),
 }
 
 """
