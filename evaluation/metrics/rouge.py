@@ -30,6 +30,10 @@ class RougeMetric(AbstractMetric):
         # You will see how to access a specific value in the Rouge output
         # e.g. you could do print(results["rouge1"].mid.fmeasure)
 
+        # preprocessing: each prediction or reference should be a string separated by spaces
+        predictions = [' '.join(prediction.split()) for prediction in predictions]
+        references = [' '.join(reference.split()) for reference in references]
+        
         # compute metric
         scores = metric.compute(predictions=predictions, references=references)
 

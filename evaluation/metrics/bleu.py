@@ -4,6 +4,7 @@ from datasets import load_metric
 
 from evaluation.metrics.base import AbstractMetric
 
+
 class BleuMetric(AbstractMetric):
     def __init__(self):
         super().__init__()
@@ -22,14 +23,15 @@ class BleuMetric(AbstractMetric):
         """
         # tokenize predictions and references
         # make sure to format inputs as described in metric documentation
-        predictions = [word_tokenize(prediction) for prediction in predictions]
-        references = [[word_tokenize(reference)] for reference in references]
-        
+        # predictions = [word_tokenize(prediction) for prediction in predictions]
+        predictions = [prediction.split() for prediction in predictions]
+        # references = [[word_tokenize(reference)] for reference in references]
+        references = [[reference.split()] for reference in references]
+
         # load metric
         metric = load_metric("bleu")
 
         # compute metric
         scores = metric.compute(predictions=predictions, references=references)
 
-        return 100 * scores['bleu']
-        
+        return 100 * scores["bleu"]

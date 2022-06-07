@@ -11,7 +11,8 @@ def avg_gen_length(pred_summary: str) -> int:
     Returns:
         The number of tokens in the predicted summary.
     """
-    pred_tokens = pred_summary.split(' ')
+    # pred_tokens = pred_summary.split(' ')
+    pred_tokens = pred_summary.split()
     return len(pred_tokens)
 
 

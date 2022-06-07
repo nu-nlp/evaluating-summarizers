@@ -1,4 +1,4 @@
-from optimization_based.summarizers import (
+from preneural.summarizers import (
     LeadSummarizer,
     RandomSummarizer,
     TextRankSummarizer,

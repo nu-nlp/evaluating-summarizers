@@ -1,5 +1,5 @@
-# from summa.summarizer import summarize
-from .summa_local.summarizer import summarize
+from summa.summarizer import summarize
+# from .summa_local.summarizer import summarize
 from optimization_based.summarizers.base import AbstractSummarizer
 
 

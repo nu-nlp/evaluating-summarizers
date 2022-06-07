@@ -41,7 +41,7 @@ class LexRankSummarizer(AbstractSummarizer):
         for sentence_index in ranked_sentence_indexes:
 
             sentence = sentences[sentence_index]
-            sentence_word_count = len(word_tokenize(sentence))
+            sentence_word_count = len(sentence.split())
             # if adding sentence leads to less accurate word count, stop adding sentences
             ## Checks if the inclusion of the sentence gives a better approximation to the word parameter
             if abs(length - summary_word_count - sentence_word_count) > abs(

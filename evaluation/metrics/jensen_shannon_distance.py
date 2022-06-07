@@ -5,6 +5,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 from evaluation.metrics.base import AbstractMetric
 
+
 def compute_token_probabilities(token_counts: List[int]) -> List[float]:
     """
     Computes the probability of each token occuring relative to the others.
@@ -17,8 +18,8 @@ def compute_token_probabilities(token_counts: List[int]) -> List[float]:
     num_tokens = sum(token_counts)
     return [c / float(num_tokens) for c in token_counts]
 
-def jensen_shannon_distance(pred_summary: str,
-                            reference: str) -> float:
+
+def jensen_shannon_distance(pred_summary: str, reference: str) -> float:
     """
     Computes the Jensen-Shannon distance of two texts using the unigram probabilities in the two texts.
     Args:
@@ -72,9 +73,12 @@ class JensenShannonMetric(AbstractMetric):
         """
 
         # Calculate the Jensen-Shannon distance for every prediction-reference pair
-        scores = [jensen_shannon_distance(pair[0], pair[1]) for pair in zip(predictions, references)]
+        scores = [
+            jensen_shannon_distance(pair[0], pair[1])
+            for pair in zip(predictions, references)
+        ]
 
         # Average the distances to produce a single, final score
         jensen_shannon_avg = np.mean(scores)
 
-        return jensen_shannon_avg*100
+        return jensen_shannon_avg * 100

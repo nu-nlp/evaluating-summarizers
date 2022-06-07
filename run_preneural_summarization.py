@@ -11,7 +11,7 @@ nltk.download('punkt')
 from data_utils.data import load_dataset_huggingface
 
 
-from optimization_based.extensions import (
+from preneural.extensions import (
     textrank_summarizer,
     lexrank_summarizer,
     lead_summarizer,
@@ -48,8 +48,8 @@ def summarize_document(text: str,
     end = datetime.now()
 
     # record document and summary lengths in words
-    document_word_count = len(word_tokenize(text))
-    summary_word_count = len(word_tokenize(summary))
+    document_word_count = len(text.split())
+    summary_word_count = len(summary.split())
 
     summary_output = {
         "model": summarizer.model_name,

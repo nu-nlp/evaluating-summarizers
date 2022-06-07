@@ -3,6 +3,7 @@ from datasets import load_metric
 
 from evaluation.metrics.base import AbstractMetric
 
+
 class SacrebleuMetric(AbstractMetric):
     def __init__(self):
         super().__init__()
@@ -11,7 +12,6 @@ class SacrebleuMetric(AbstractMetric):
     @staticmethod
     def evaluate(predictions: List[str], references: List[str]) -> Dict:
         """Runs sacrebleu: https://github.com/huggingface/datasets/tree/master/metrics/sacrebleu
-
         Args:
             predictions (List[str]): list of summaries
             references (List[str]): list of target summaries
@@ -21,7 +21,7 @@ class SacrebleuMetric(AbstractMetric):
         """
         # make sure to format inputs as described in metric documentation
         references = [[reference] for reference in references]
-        
+
         # load metric
         metric = load_metric("sacrebleu")
 
@@ -29,6 +29,6 @@ class SacrebleuMetric(AbstractMetric):
         scores = metric.compute(predictions=predictions, references=references)
 
         # select the key/score we are interested in
-        sacrebelue_score = scores['score']
+        sacrebleu_score = scores["score"]
 
-        return sacrebelue_score
+        return sacrebleu_score
