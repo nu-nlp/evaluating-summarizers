@@ -2,6 +2,7 @@ from typing import List, Dict
 
 from evaluation.metrics.base import AbstractMetric
 
+
 def avg_gen_length(pred_summary: str) -> int:
     """
     Computes the number of tokens in the given predicted summary.

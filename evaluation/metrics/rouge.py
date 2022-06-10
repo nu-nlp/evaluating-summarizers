@@ -12,7 +12,7 @@ class RougeMetric(AbstractMetric):
     @staticmethod
     def evaluate(predictions: List[str], references: List[str]) -> Dict:
         """Runs rouge: https://github.com/huggingface/datasets/tree/master/metrics/rouge
-
+        Tokenizer: Google research tokenizer
         Args:
             predictions (List[str]): list of summaries
             references (List[str]): list of target summaries
@@ -26,13 +26,9 @@ class RougeMetric(AbstractMetric):
         # load metric
         metric = load_metric("rouge")
 
-        # TODO: Look at the metric card: https://github.com/huggingface/datasets/tree/master/metrics/rouge.
-        # You will see how to access a specific value in the Rouge output
-        # e.g. you could do print(results["rouge1"].mid.fmeasure)
-
         # preprocessing: each prediction or reference should be a string separated by spaces
-        predictions = [' '.join(prediction.split()) for prediction in predictions]
-        references = [' '.join(reference.split()) for reference in references]
+        # predictions = [' '.join(prediction.split()) for prediction in predictions]
+        # references = [' '.join(reference.split()) for reference in references]
         
         # compute metric
         scores = metric.compute(predictions=predictions, references=references)
