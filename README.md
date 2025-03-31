@@ -2,6 +2,24 @@
 
 A project to compare neural abstractive and non-neural/optimization_based extractive summarizers.
 
+## Citation
+If you use this code or find it helpful, please cite our paper:
+
+**David Demeter et al., "Multi-domain Summarization from Leaderboards to Practice: Re-examining Automatic and Human Evaluation"**  
+*David Demeter, Oshin Agarwal, Simon Benigeri, Marko Sterbentz, Neil Molino, John Conroy, Ani Nenkova*  
+Proceedings of the Third Workshop on Natural Language Generation, Evaluation, and Metrics (GEM), 2023.  
+[PDF available on ACL Anthology](https://aclanthology.org/2023.gem-1.20/)
+
+```bibtex
+@inproceedings{demeter2023multidomain,
+  title={Multi-domain Summarization from Leaderboards to Practice: Re-examining Automatic and Human Evaluation},
+  author={Demeter, David and Agarwal, Oshin and Benigeri, Simon and Sterbentz, Marko and Molino, Neil and Conroy, John and Nenkova, Ani},
+  booktitle={Proceedings of the Third Workshop on Natural Language Generation, Evaluation, and Metrics (GEM)},
+  year={2023},
+  pages={233--242}
+}
+```
+
 ## 1. Setup
 
 ###  Setup your python environment for neural models summarization
